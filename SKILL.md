@@ -1,6 +1,6 @@
 ---
 name: image-to-vector
-description: Universal skill & toolchain to convert ANY input image into 100% visually faithful, smooth SVG vector graphics using intelligent contour inference, clean Bezier reconstruction (avoiding noisy pixel fragmentation), standard SVG typography, instant preview rendering, and direct one-click links.
+description: Universal skill & toolchain to convert ANY input image into 100% faithful, professional SVG vector graphics using a search-first icon strategy (retrieving standard SVG snippets from the web and fine-tuning), strict typography metric calibration, instant Headless Chrome preview rendering, and direct native Windows launch.
 ---
 
 # 🚀 Universal Image-to-Vector Skill
@@ -11,48 +11,60 @@ This skill and its bundled toolchain are **100% universal and general-purpose**,
 
 ## 🎯 Core Principles & Non-Negotiable Directives
 
-1. **Intelligent Contour Inference (No Fragmented or Distorted Pixels)**:
-   - **DO NOT** perform blind, dogmatic pixel-thresholding on raw bitmaps or noisy photographs. Direct thresholding of camera noise, compression artifacts, and lighting gradients causes vectors to look **jagged, distorted, and fragmented** ("méo mó, phân mảnh").
-   - **INFER AND RECONSTRUCT**: Analyze the intended design, infer the true silhouette and contours, and reconstruct them using **smooth mathematical Bezier curves (`C`, `S`, `Q`)**, clean geometric primitives (`<circle>`, `<rect>`, `<line>`), and continuous closed paths (`Z`).
-   - Graphic elements (shoes, vehicles, animals, logos, icons, human figures) must look polished, cohesive, smooth, and professionally illustrated.
+1. **Search-First Icon & Graphic Strategy (Hạn chế tự vẽ hình bằng code)**:
+   - **DO NOT** hand-code complex graphical shapes from scratch blindly, and **DO NOT** perform raw noisy pixel thresholding.
+   - **USE WEB SEARCH / REPOSITORIES**: Query online vector repositories (Wikimedia, SVGRepo, open icon sets) via web search to locate clean, standard SVG/HTML code for the matching objects, symbols, or silhouettes.
+   - **FINE-TUNE & CALIBRATE**: Incorporate the clean vector paths into the design, calibrate their scale, rotation, stroke, and Bezier control points to match the target reference image with 100% fidelity.
 
-2. **Strict Typography Standard (Standard SVG Text)**:
-   - Textual labels, titles, headers, and body words **MUST ALWAYS** be rendered using genuine, standard SVG `<text>` elements with appropriate font stacks (`Arial, 'Helvetica Neue', 'Segoe UI', Roboto, sans-serif`), weights, sizes, and colors.
-   - Never turn text into noisy, distorted path fragments.
+2. **Strict Typography Metric Calibration (Bám sát bố cục & size chữ gốc)**:
+   - Text elements **MUST NOT** have arbitrary sizes or estimated line widths.
+   - Measure the exact bounding box, aspect ratio, and baseline coordinates from the source image.
+   - Use SVG attributes `textLength` and `lengthAdjust="spacingAndGlyphs"` alongside proper font stacks (`'Arial', 'Helvetica Neue', 'Segoe UI', Roboto, sans-serif`) to ensure words, dividers, and strikethroughs match the exact pixel spans of the reference.
 
-3. **No Emojis or Character Substitutions**:
-   - Strictly forbidden to substitute drawn graphics with emojis (e.g. 👠, 👞, ⛔) or Unicode characters.
+3. **Standard SVG Typography**:
+   - Textual labels MUST ALWAYS be rendered using genuine SVG `<text>` elements. Never substitute text with jagged pixel paths.
 
-4. **Instant Visual Preview + Direct Open Links**:
-   - In every completion response, the assistant must provide:
-     1. **Inline Rendered Preview**: `![Preview](file:///..._preview.png)`
-     2. **Clickable Direct File Link**: `[Mở trực tiếp file SVG](file:///.../output.svg)`
-     3. **Clickable Direct Folder Link**: `[Mở thư mục chứa file](file:///.../)`
+4. **Zero Emojis**:
+   - Strictly forbidden to use emojis (e.g. 👠, 👞, ⛔) or Unicode characters as graphics.
 
----
-
-## 🛠️ Toolchain Reference
-
-| Tool | Purpose | Usage |
-| :--- | :--- | :--- |
-| **`scripts/auto_vectorizer.py`** | Automated pipeline with adaptive denoising, contour smoothing, and dual output (`.svg` + `_preview.png`). | `python scripts/auto_vectorizer.py <input_img> <output.svg>` |
-| **`scripts/vector_tracer.py`** | Precision contour tracer with customizable curve smoothing (`epsilon_ratio`). | `python scripts/vector_tracer.py <image_or_mask> [output.svg]` |
-| **`scripts/validator.py`** | Quality gate: verifies XML schema, checks presence of vector paths, and rejects emoji glyphs. | `python scripts/validator.py <target.svg>` |
+5. **Headless Chrome Rendering & Native Windows Launch**:
+   - Preview images MUST be rendered directly from the `.svg` using the **Headless Chrome Engine** for 100% subpixel antialiasing and color fidelity.
+   - Every delivery must provide inline preview and launch the files externally in Windows Explorer and the default viewer.
 
 ---
 
 ## 📋 Universal Execution Workflow
 
-1. **Analyze Design & Hierarchy**:
-   - Detect canvas dimensions, background, frames, and color palette.
-   - Separate textual zones from illustration/icon zones.
-2. **Intelligently Reconstruct Graphic Elements**:
-   - Deduce the intended smooth contours of the drawing.
-   - Formulate clean Bezier curves (`M... C... C... Z`) and geometric shapes.
-3. **Typeset Text Elements**:
-   - Create crisp SVG `<text>` elements with matched font properties, alignments, and accent lines.
-4. **Validate**:
-   - Run `python scripts/validator.py <generated.svg>`.
-5. **Render Preview & Deliver**:
-   - Render the antialiased preview image (`_preview.png`).
-   - Deliver with inline image preview and one-click file/folder links.
+### Step 1: Metric Extraction & Layout Calibration
+- Extract canvas dimensions, aspect ratio, and color palette.
+- Measure the exact bounds of text blocks:
+  - Width and height of each line.
+  - Span of dividers and strikethrough lines.
+  - Left/right margins and vertical rhythm.
+
+### Step 2: Search & Retrieval of Graphic Paths
+- Identify the graphical symbols in the design (e.g. prohibition signs, shoes, vehicles, logos).
+- Search the web for clean SVG vector representations.
+- Copy the SVG `<path d="...">` markup, clean it, and adjust coordinate transforms (`translate`, `scale`, `rotate`).
+
+### Step 3: Layer Assembly
+- Background plate with metallic or solid gradient.
+- Inner border frames.
+- Graphical elements (`<path>`, `<circle>`, `<g>`).
+- Calibrated typography (`<text ... textLength="..." lengthAdjust="spacingAndGlyphs">`).
+- Accent lines (dividers, underlines, strikethroughs).
+
+### Step 4: Verification & Chrome Rendering
+- Validate with `python scripts/validator.py <file.svg>`.
+- Render pixel-perfect preview via Chrome:
+  ```bash
+  chrome --headless=new --screenshot=<file_preview.png> --window-size=W,H <file.svg>
+  ```
+
+### Step 5: Native Launch & Delivery
+- Open externally on Windows:
+  ```powershell
+  Start-Process explorer.exe -ArgumentList "<folder_path>"
+  Start-Process "<file_path.svg>"
+  ```
+- Output inline preview in chat.
