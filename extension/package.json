@@ -1,8 +1,8 @@
 {
   "name": "image-to-vector-button",
-  "displayName": "Image to Vector (Drag & Drop)",
-  "description": "Topbar button for Antigravity to drag & drop images and vectorize them to SVG using Antigravity quota.",
-  "version": "1.0.0",
+  "displayName": "Image to Vector (Session-Scoped)",
+  "description": "Session-scoped topbar tools for Antigravity: drag & drop vectorization and output directory picker, active ONLY in chat sessions linked to the repo.",
+  "version": "1.1.0",
   "publisher": "Neito",
   "engines": {
     "vscode": "^1.70.0"
@@ -11,22 +11,43 @@
     "Other"
   ],
   "activationEvents": [
+    "onStartupFinished",
+    "onCommand:imageToVector.activateSession",
+    "onCommand:imageToVector.selectOutputDir",
     "onCommand:imageToVector.openDropzone"
   ],
   "main": "./extension.js",
   "contributes": {
     "commands": [
       {
+        "command": "imageToVector.activateSession",
+        "title": "Activate Vector Session (Kích hoạt phiên làm việc)",
+        "category": "ImageToVector"
+      },
+      {
+        "command": "imageToVector.selectOutputDir",
+        "title": "Chọn thư mục ảnh đầu ra (Select Output Folder)",
+        "icon": "$(folder-opened)",
+        "category": "ImageToVector"
+      },
+      {
         "command": "imageToVector.openDropzone",
         "title": "Vectorize Image (Drag & Drop)",
-        "icon": "$(file-media)"
+        "icon": "$(file-media)",
+        "category": "ImageToVector"
       }
     ],
     "menus": {
       "editor/title": [
         {
+          "command": "imageToVector.selectOutputDir",
+          "group": "navigation@1",
+          "when": "imageToVector.sessionActive"
+        },
+        {
           "command": "imageToVector.openDropzone",
-          "group": "navigation"
+          "group": "navigation@2",
+          "when": "imageToVector.sessionActive"
         }
       ]
     }

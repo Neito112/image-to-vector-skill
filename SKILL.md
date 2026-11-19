@@ -1,70 +1,65 @@
 ---
 name: image-to-vector
-description: Universal skill & toolchain to convert ANY input image into 100% faithful, professional SVG vector graphics using a search-first icon strategy (retrieving standard SVG snippets from the web and fine-tuning), strict typography metric calibration, instant Headless Chrome preview rendering, and direct native Windows launch.
+description: Universal skill & toolchain to convert ANY input image into 100% faithful SVG vector graphics. Activates as a dedicated Vector Studio when the repository link is pasted into chat, with a session-scoped output folder picker icon strictly isolated to that chat alone.
 ---
 
 # 🚀 Universal Image-to-Vector Skill
 
-This skill and its bundled toolchain are **100% universal and general-purpose**, designed to convert **ANY input image** into high-fidelity, clean, professional SVG vector graphics.
+This skill and its bundled toolchain are **100% universal and general-purpose**, designed to convert **ANY input image** into high-fidelity, clean, professional SVG vector graphics using Antigravity's built-in quota.
+
+---
+
+## 🔒 SESSION-SCOPED ACTIVATION & ISOLATION RULE (QUY TẮC CÔ LẬP KHUNG CHAT)
+
+1. **Kích hoạt qua Link Repo (Activation via Repo Link)**:
+   - Khi người dùng gửi/nhập link repository:
+     `https://github.com/Neito112/image-to-vector-skill`
+     vào bất kỳ khung chat nào của Antigravity, **khung chat đó lập tức biến thành Xưởng Tạo Ảnh Vector chuyên dụng**.
+   - Agent trong phiên đó tự động kích hoạt session (`imageToVector.activateSession`), tải cấu hình và sẵn sàng tiếp nhận ảnh.
+
+2. **Tuyệt đối không chèn nút sang các khung chat khác (Strict Session Isolation)**:
+   - Icon chọn thư mục ảnh đầu ra `$(folder-opened)` và icon kéo thả ảnh `$(file-media)` trên Topbar được kiểm soát bởi context key:
+     `"when": "imageToVector.sessionActive"`
+   - **NGHIÊM CẤM HIỂN THỊ TOÀN CỤC**: Ở tất cả các khung chat khác, cửa sổ soạn thảo khác, các nút này **hoàn toàn vô hình 100%**. Chúng chỉ xuất hiện duy nhất tại phiên làm việc nơi link repo được gửi vào.
+
+3. **Tùy ý chọn thư mục ảnh đầu ra**:
+   - Người dùng có thể nhấp vào icon `$(folder-opened)` trên Topbar của phiên đó để chọn thư mục lưu ảnh tùy ý thông qua hộp thoại Windows File Picker.
+   - Hoặc chỉ cần nói trong chat: `"Đổi thư mục xuất ảnh sang <đường_dẫn>"`, Agent sẽ cập nhật file `output_config.json` ngay lập tức.
 
 ---
 
 ## 🎯 Core Principles & Non-Negotiable Directives
 
 1. **Search-First Icon & Graphic Strategy (Hạn chế tự vẽ hình bằng code)**:
-   - **DO NOT** hand-code complex graphical shapes from scratch blindly, and **DO NOT** perform raw noisy pixel thresholding.
-   - **USE WEB SEARCH / REPOSITORIES**: Query online vector repositories (Wikimedia, SVGRepo, open icon sets) via web search to locate clean, standard SVG/HTML code for the matching objects, symbols, or silhouettes.
-   - **FINE-TUNE & CALIBRATE**: Incorporate the clean vector paths into the design, calibrate their scale, rotation, stroke, and Bezier control points to match the target reference image with 100% fidelity.
-
+   - Tra cứu và kế thừa các đoạn mã vector chuẩn từ các thư viện vector uy tín (Wikimedia, SVGRepo, ISO icons), sau đó tinh chỉnh toán học các điểm kiểm soát Bezier (`C`), góc xoay và nét cắt để đạt độ ăn khớp 100% với ảnh gốc.
 2. **Strict Typography Metric Calibration (Bám sát bố cục & size chữ gốc)**:
-   - Text elements **MUST NOT** have arbitrary sizes or estimated line widths.
-   - Measure the exact bounding box, aspect ratio, and baseline coordinates from the source image.
-   - Use SVG attributes `textLength` and `lengthAdjust="spacingAndGlyphs"` alongside proper font stacks (`'Arial', 'Helvetica Neue', 'Segoe UI', Roboto, sans-serif`) to ensure words, dividers, and strikethroughs match the exact pixel spans of the reference.
-
-3. **Standard SVG Typography**:
-   - Textual labels MUST ALWAYS be rendered using genuine SVG `<text>` elements. Never substitute text with jagged pixel paths.
-
-4. **Zero Emojis**:
-   - Strictly forbidden to use emojis (e.g. 👠, 👞, ⛔) or Unicode characters as graphics.
-
-5. **Headless Chrome Rendering & Native Windows Launch**:
-   - Preview images MUST be rendered directly from the `.svg` using the **Headless Chrome Engine** for 100% subpixel antialiasing and color fidelity.
-   - Every delivery must provide inline preview and launch the files externally in Windows Explorer and the default viewer.
+   - Trích xuất pixel đo đạc trực tiếp từ ảnh gốc. Áp dụng chuẩn thuộc tính SVG `textLength` và `lengthAdjust="spacingAndGlyphs"` để cỡ chữ, độ co dãn (condensed), thanh kẻ phân cách và thanh gạch ngang đỏ bao phủ chính xác 100% bề rộng văn bản gốc.
+3. **Chuẩn phông chữ thông thường (Standard SVG Text)**:
+   - Luôn sử dụng thẻ `<text>` tiêu chuẩn cho chữ viết, không làm vỡ nét chữ thành pixel thô.
+4. **Tuyệt đối không dùng Emoji thay thế hình vẽ**.
+5. **Headless Chrome Rendering & Mở ngoài Windows**:
+   - Render preview bằng Chrome Engine để ảnh xem trước mịn mượt 100% như file SVG thật.
+   - Luôn mở file và thư mục trực tiếp ra ngoài Windows (File Explorer và trình duyệt mặc định).
 
 ---
 
-## 📋 Universal Execution Workflow
+## 📋 Hướng Dẫn Thực Thi
 
-### Step 1: Metric Extraction & Layout Calibration
-- Extract canvas dimensions, aspect ratio, and color palette.
-- Measure the exact bounds of text blocks:
-  - Width and height of each line.
-  - Span of dividers and strikethrough lines.
-  - Left/right margins and vertical rhythm.
-
-### Step 2: Search & Retrieval of Graphic Paths
-- Identify the graphical symbols in the design (e.g. prohibition signs, shoes, vehicles, logos).
-- Search the web for clean SVG vector representations.
-- Copy the SVG `<path d="...">` markup, clean it, and adjust coordinate transforms (`translate`, `scale`, `rotate`).
-
-### Step 3: Layer Assembly
-- Background plate with metallic or solid gradient.
-- Inner border frames.
-- Graphical elements (`<path>`, `<circle>`, `<g>`).
-- Calibrated typography (`<text ... textLength="..." lengthAdjust="spacingAndGlyphs">`).
-- Accent lines (dividers, underlines, strikethroughs).
-
-### Step 4: Verification & Chrome Rendering
-- Validate with `python scripts/validator.py <file.svg>`.
-- Render pixel-perfect preview via Chrome:
-  ```bash
-  chrome --headless=new --screenshot=<file_preview.png> --window-size=W,H <file.svg>
-  ```
-
-### Step 5: Native Launch & Delivery
-- Open externally on Windows:
-  ```powershell
-  Start-Process explorer.exe -ArgumentList "<folder_path>"
-  Start-Process "<file_path.svg>"
-  ```
-- Output inline preview in chat.
+1. **Khi nhận link repo trong chat:**
+   - Kích hoạt session vector riêng biệt cho chat đó:
+     ```bash
+     python scripts/set_output_dir.py
+     ```
+   - Xác nhận thư mục đầu ra hiện tại và chào đón người dùng kéo thả ảnh.
+2. **Khi nhận ảnh đầu vào:**
+   - Vector hóa theo thư mục đã cấu hình trong `output_config.json`.
+   - Render ảnh preview bằng Headless Chrome:
+     ```bash
+     chrome --headless=new --screenshot=<out_preview.png> --window-size=1000,534 <out.svg>
+     ```
+   - Hiển thị ảnh preview ngay trong chat.
+   - Gọi lệnh mở ngoài Windows:
+     ```powershell
+     Start-Process explorer.exe -ArgumentList "<output_folder>"
+     Start-Process "<output_svg_path>"
+     ```

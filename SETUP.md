@@ -1,65 +1,66 @@
-# 🛠️ Hướng Dẫn Cài Đặt (Setup Guide)
+# 🛠️ Hướng Dẫn Cài Đặt & Vận Hành (Setup Guide)
 
 Tài liệu này được biên soạn chuẩn hóa để **Người dùng (Humans)** và **Trí tuệ nhân tạo (AI Agents)** đều có thể đọc, hiểu và tự động thiết lập 100%.
 
 ---
 
-## 👤 PHẦN 1: HƯỚNG DẪN DÀNH CHO NGƯỜI DÙNG (HUMAN GUIDE)
+## 🔒 NGUYÊN TẮC QUAN TRỌNG: KÍCH HOẠT THEO KHUNG CHAT (SESSION-SCOPED)
 
-### 1. Cài đặt siêu tốc (1 cú nhấp chuột)
-1. Mở thư mục repository `image-to-vector-skill`.
-2. Double-click chạy file **`install.bat`**.
-3. Khởi động lại ứng dụng **Antigravity**.
-
-### 2. Vị trí nút trên Topbar và Cách sử dụng
-- **Vị trí nút:** Nhìn lên góc trên bên phải của thanh công cụ Topbar (khu vực Editor Title Bar), bạn sẽ thấy một nút biểu tượng ảnh: `$(file-media)` mang tên **"Vectorize Image (Drag & Drop)"**.
-- **Cách dùng:**
-  1. Nhấp vào nút **Vectorize Image** trên Topbar.
-  2. Một bảng điều khiển hiện đại sẽ mở ra với vùng kéo thả: **"Kéo & thả ảnh vào đây"**.
-  3. Kéo bất kỳ file ảnh nào (`.jpg`, `.png`, `.webp`, `.bmp`) từ máy tính thả vào khung.
-  4. Hệ thống sẽ tự động thực hiện vẽ lại vector, hiển thị bản preview trực tiếp kèm 2 nút bấm:
-     - 📄 **Mở file SVG ngoài Windows**
-     - 📂 **Mở thư mục ngoài Windows**
-
-### 3. Về Quota sử dụng trong Antigravity
-- **Sử dụng 100% Quota Antigravity có sẵn:** Toàn bộ quá trình phân tích hình học, xử lý nét vẽ và tối ưu hóa đều chạy trực tiếp thông qua môi trường và model Gemini (3.8 Flash / Pro) đã đăng nhập trong Antigravity của bạn.
-- **Không tốn thêm chi phí:** Không yêu cầu nhập thêm thẻ tín dụng hay API key trả phí của bên thứ ba.
+> [!IMPORTANT]
+> **Tuyệt đối cô lập:** Nút chọn thư mục đầu ra và nút công cụ vector **CHỈ TỒN TẠI DUY NHẤT** ở khung chat nào được nhập link repo. **Tuyệt đối KHÔNG xuất hiện hay ảnh hưởng đến bất kỳ khung chat hoặc cửa sổ soạn thảo nào khác!**
 
 ---
 
-## 🤖 PHẦN 2: HƯỚNG DẪN DÀNH CHO AI AGENT (AGENT SPECIFICATION)
+## 👤 PHẦN 1: DÀNH CHO NGƯỜI DÙNG (HUMAN GUIDE)
 
-When an AI Agent is tasked with setting up or executing this capability, follow this exact automated protocol:
+### 1. Cách kích hoạt Xưởng Tạo Ảnh Vector trong 3 giây
+1. Mở bất kỳ khung chat nào trong Antigravity.
+2. Gửi link repository này vào khung chat:
+   ```text
+   https://github.com/Neito112/image-to-vector-skill
+   ```
+3. Khung chat đó sẽ **ngay lập tức biến thành Xưởng Tạo Ảnh Vector chuyên dụng** cho phiên làm việc của bạn.
 
-### 1. Discovery & Extension Deployment
-- **Extension Target Directory:**
-  - Windows: `%USERPROFILE%\.vscode\extensions\image-to-vector-button\`
-  - Linux/macOS: `~/.vscode/extensions/image-to-vector-button/`
-- **Action:** Copy the contents of `./extension/` directly into the extension target directory.
+### 2. Tùy ý chọn thư mục ảnh đầu ra
+- Ngay khi phiên làm việc được kích hoạt, một icon thư mục `$(folder-opened)` (**Chọn thư mục ảnh đầu ra**) sẽ xuất hiện trên Topbar/thanh công cụ riêng của khung chat đó.
+- Nhấp vào icon này để mở hộp thoại Windows và chọn bất kỳ thư mục nào trên máy tính bạn muốn lưu ảnh vector.
+- Bạn cũng có thể ra lệnh trực tiếp trong chat: *"Đổi thư mục lưu sang C:\MyVectors"*.
 
-### 2. Skill Registration
-- **Global Skill Directory:**
-  - Windows: `%USERPROFILE%\.gemini\skills\image-to-vector\`
-  - Linux/macOS: `~/.gemini/skills/image-to-vector/`
-- **Action:** Copy `SKILL.md` and `./scripts/` to the skill directory so the Antigravity language server registers the `/image-to-vector` slash command and autonomous capability.
+### 3. Kéo thả ảnh & Sử dụng Quota Antigravity
+- Kéo thả bất kỳ ảnh nào vào khung chat hoặc nhấp icon `$(file-media)` trên Topbar để thả ảnh.
+- Toàn bộ quá trình xử lý sử dụng **100% Quota có sẵn của Antigravity (Gemini 3.8 Flash/Pro)**, không tốn thêm bất kỳ chi phí hay API key nào.
 
-### 3. Execution Protocol via CLI / Script
-When an image is provided:
-```bash
-python scripts/auto_vectorizer.py <input_image_path> <output_svg_path>
-```
-To validate compliance:
-```bash
-python scripts/validator.py <output_svg_path>
-```
+---
 
-### 4. Headless Preview & External Launch
-To render the subpixel preview without raster distortion:
-```bash
-chrome --headless=new --disable-gpu --screenshot=<preview.png> --window-size=1000,534 <file.svg>
-```
-To launch externally in Windows:
-```powershell
-Start-Process explorer.exe -ArgumentList "<output_folder>"
-Start-Process "<output_file.svg>"
-```
+## 🤖 PHẦN 2: DÀNH CHO AI AGENT (AGENT SPECIFICATION)
+
+When an AI Agent is tasked with configuring or operating this skill, enforce these exact system rules:
+
+### 1. Detection & Session Activation
+Whenever the user inputs the repository URL in the current conversation:
+- Identify the session context as an active **Vector Studio Session**.
+- Run `scripts/set_output_dir.py` to inspect or initialize the target output directory.
+- Execute context activation in the extension host:
+  ```json
+  "imageToVector.sessionActive": true
+  ```
+- **Ensure Scope Isolation**: Do NOT declare or inject the navigation buttons globally without the `"when": "imageToVector.sessionActive"` filter guard.
+
+### 2. Directory Routing
+- Read the active output directory from `output_config.json`.
+- When generating SVG vectors:
+  ```bash
+  python scripts/auto_vectorizer.py <input_image> <target_output_dir/output.svg>
+  ```
+- Render preview via Chrome:
+  ```bash
+  chrome --headless=new --screenshot=<output_preview.png> --window-size=1000,534 <output.svg>
+  ```
+
+### 3. Delivery
+- Render the preview image inline in chat: `![Preview](file:///...)`
+- Open externally on Windows:
+  ```powershell
+  Start-Process explorer.exe -ArgumentList "<target_output_dir>"
+  Start-Process "<output_svg_path>"
+  ```

@@ -2,18 +2,16 @@
 
 A standardized, production-grade skill and automated toolchain for converting **ANY input image** into **100% faithful, scalable SVG vector graphics**.
 
-Includes a **Topbar Button for Antigravity (Drag & Drop)** utilizing your built-in Antigravity AI quota!
+Designed for **Antigravity**: transforms any chat into a dedicated Vector Studio when the repository link is pasted, with a session-scoped output folder picker icon strictly isolated to that chat alone.
 
 ---
 
-## 🌟 Highlights
+## 🔒 Session-Scoped Activation (Cô lập theo từng khung chat)
 
-- **Topbar Button & Drag-and-Drop**: 1-click button located right on the Antigravity topbar. Simply drag and drop any image into the panel.
-- **Built-in Antigravity Quota**: Runs directly using the logged-in Gemini models in Antigravity. Zero external API keys needed.
-- **Pure Vector Drawings**: Graphical elements are traced or retrieved from standard open SVG libraries, then fine-tuned with smooth Bezier curves. **Strictly zero emojis or character approximations.**
-- **Accurate Typography**: Standard SVG `<text>` elements with precise `textLength` and `lengthAdjust` metrics bám sát reference photos.
-- **Pixel-Perfect Preview**: Rendered with the Chrome Headless engine for true subpixel antialiasing.
-- **Native External Launch**: 1-click buttons to open the SVG in your default external browser and folder in Windows Explorer.
+- **Kích hoạt qua Link Repo:** Chỉ cần nhập link repo vào khung chat, khung chat đó lập tức biến thành Xưởng Tạo Ảnh Vector.
+- **Cách ly tuyệt đối:** Icon chọn thư mục đầu ra `$(folder-opened)` và icon kéo thả ảnh **chỉ xuất hiện duy nhất ở khung chat đã nhận link repo**. Tuyệt đối không xuất hiện ở các khung chat khác!
+- **Tùy chọn thư mục đầu ra:** Tùy ý chọn thư mục lưu ảnh vector qua icon hoặc ra lệnh trực tiếp trong chat.
+- **Sử dụng Quota Antigravity có sẵn:** Tận dụng 100% quota Gemini trong Antigravity, hoàn toàn miễn phí không cần API key ngoài.
 
 ---
 
@@ -21,11 +19,12 @@ Includes a **Topbar Button for Antigravity (Drag & Drop)** utilizing your built-
 
 👉 Xem chi tiết tại [SETUP.md](./SETUP.md)
 
-### Dành cho Người dùng (1 click):
-Chạy file **`install.bat`** rồi khởi động lại Antigravity. Nút **`Vectorize Image`** sẽ xuất hiện trên thanh Topbar (khu vực Editor Title Bar bên phải).
-
-### Dành cho AI Agent:
-Tự động copy `extension/` vào `~/.vscode/extensions/image-to-vector-button/` và `SKILL.md` vào `~/.gemini/skills/image-to-vector/`.
+1. Dán link repo vào khung chat Antigravity:
+   ```text
+   https://github.com/Neito112/image-to-vector-skill
+   ```
+2. Icon chọn thư mục đầu ra xuất hiện trên Topbar của khung chat đó.
+3. Kéo thả ảnh vào và nhận file vector SVG cực mịn nét kèm ảnh preview tức thì!
 
 ---
 
@@ -35,11 +34,13 @@ Tự động copy `extension/` vào `~/.vscode/extensions/image-to-vector-button
 ├── SETUP.md                  # Hướng dẫn chi tiết cho cả Người và Agent
 ├── SKILL.md                  # Quy chuẩn SOP và hướng dẫn thực thi chuẩn
 ├── install.bat               # Script cài đặt tự động 1-click cho Windows
-├── extension/                # VS Code / Antigravity Topbar Extension
-│   ├── package.json          # Đăng ký nút Topbar (editor/title navigation)
-│   └── extension.js          # Webview Panel kéo thả ảnh và xử lý
+├── output_config.json        # File lưu cấu hình thư mục đầu ra
+├── extension/                # VS Code / Antigravity Topbar Extension (Session-scoped)
+│   ├── package.json          # Khóa nút bấm bằng context imageToVector.sessionActive
+│   └── extension.js          # Logic chọn thư mục và Webview kéo thả ảnh
 ├── scripts/
 │   ├── auto_vectorizer.py    # Pipeline vector tự động đa lớp & Chrome preview
+│   ├── set_output_dir.py     # Script đổi thư mục đầu ra linh hoạt
 │   ├── vector_tracer.py      # Trích xuất contour thành thẻ <path> mượt mà
 │   └── validator.py          # Kiểm định chất lượng (loại bỏ 100% emoji)
 └── examples/

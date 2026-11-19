@@ -3,8 +3,81 @@ const path = require('path');
 const fs = require('fs');
 const { exec } = require('child_process');
 
+let outputConfigPath = '';
+
+function getEffectiveOutputDir() {
+    try {
+        if (fs.existsSync(outputConfigPath)) {
+            const data = JSON.parse(fs.readFileSync(outputConfigPath, 'utf-8'));
+            if (data && data.outputDir && fs.existsSync(data.outputDir)) {
+                return data.outputDir;
+            }
+        }
+    } catch (e) {}
+    return 'd:\\ComfyUI\\svg';
+}
+
+function saveOutputDir(newDir) {
+    try {
+        const data = { outputDir: newDir, updatedAt: new Date().toISOString() };
+        fs.writeFileSync(outputConfigPath, JSON.stringify(data, null, 2), 'utf-8');
+    } catch (e) {}
+}
+
 function activate(context) {
-    let disposable = vscode.commands.registerCommand('imageToVector.openDropzone', function () {
+    // Configure path for output_config.json
+    const wsFolders = vscode.workspace.workspaceFolders;
+    const rootDir = wsFolders && wsFolders.length > 0 ? wsFolders[0].uri.fsPath : 'd:\\ComfyUI\\svg';
+    outputConfigPath = path.join(rootDir, 'output_config.json');
+
+    // By default, sessionActive is FALSE (buttons are strictly hidden in all other chats/windows)
+    vscode.commands.executeCommand('setContext', 'imageToVector.sessionActive', false);
+
+    // Command to activate session specifically when repo link is provided
+    let activateCmd = vscode.commands.registerCommand('imageToVector.activateSession', function () {
+        vscode.commands.executeCommand('setContext', 'imageToVector.sessionActive', true);
+        const currentDir = getEffectiveOutputDir();
+        vscode.window.showInformationMessage(
+            `🚀 Khung chat này đã được kích hoạt thành Xưởng Tạo Ảnh Vector! Thư mục đầu ra hiện tại: ${currentDir}`,
+            'Đổi thư mục đầu ra'
+        ).then(selection => {
+            if (selection === 'Đổi thư mục đầu ra') {
+                vscode.commands.executeCommand('imageToVector.selectOutputDir');
+            }
+        });
+    });
+
+    // Command to select output directory
+    let selectDirCmd = vscode.commands.registerCommand('imageToVector.selectOutputDir', async function () {
+        const currentDir = getEffectiveOutputDir();
+        const options = {
+            canSelectFiles: false,
+            canSelectFolders: true,
+            canSelectMany: false,
+            openLabel: 'Chọn thư mục này làm nơi lưu ảnh vector',
+            title: 'Chọn thư mục lưu ảnh vector đầu ra'
+        };
+        if (fs.existsSync(currentDir)) {
+            options.defaultUri = vscode.Uri.file(currentDir);
+        }
+
+        const folderUri = await vscode.window.showOpenDialog(options);
+        if (folderUri && folderUri[0]) {
+            const selectedPath = folderUri[0].fsPath;
+            saveOutputDir(selectedPath);
+            vscode.window.showInformationMessage(
+                `✅ Đã đặt thư mục ảnh đầu ra: ${selectedPath}`,
+                'Mở thư mục'
+            ).then(sel => {
+                if (sel === 'Mở thư mục') {
+                    exec(`explorer.exe "${selectedPath}"`);
+                }
+            });
+        }
+    });
+
+    // Command to open drag-and-drop dropzone
+    let dropzoneCmd = vscode.commands.registerCommand('imageToVector.openDropzone', function () {
         const panel = vscode.window.createWebviewPanel(
             'imageToVectorDropzone',
             'Image to Vector (Drag & Drop)',
@@ -15,22 +88,26 @@ function activate(context) {
             }
         );
 
-        panel.webview.html = getWebviewContent();
+        const currentOutDir = getEffectiveOutputDir();
+        panel.webview.html = getWebviewContent(currentOutDir);
 
         panel.webview.onDidReceiveMessage(
             message => {
                 if (message.command === 'vectorize') {
                     const filePath = message.filePath;
-                    vscode.window.showInformationMessage('Đang vector hóa ảnh bằng Antigravity quota: ' + path.basename(filePath));
-                    
-                    // Script path in workspace or skill repo
-                    const scriptPath = 'd:\\ComfyUI\\svg\\image-to-vector-skill-repo\\scripts\\auto_vectorizer.py';
-                    const outputSvg = 'd:\\ComfyUI\\svg\\output_vector.svg';
+                    const outDir = getEffectiveOutputDir();
+                    if (!fs.existsSync(outDir)) {
+                        fs.mkdirSync(outDir, { recursive: true });
+                    }
+                    const outputSvg = path.join(outDir, 'output_vector.svg');
+                    const scriptPath = path.join(rootDir, 'image-to-vector-skill-repo', 'scripts', 'auto_vectorizer.py');
+
+                    vscode.window.showInformationMessage(`Đang vector hóa bằng Antigravity quota vào thư mục: ${outDir}`);
 
                     const cmd = `python "${scriptPath}" "${filePath}" "${outputSvg}"`;
                     exec(cmd, (err, stdout, stderr) => {
                         if (err) {
-                            vscode.window.showErrorMessage('Lỗi xử lý: ' + err.message);
+                            vscode.window.showErrorMessage('Lỗi xử lý vector: ' + err.message);
                             return;
                         }
                         const svgData = fs.readFileSync(outputSvg, 'utf-8');
@@ -41,11 +118,13 @@ function activate(context) {
                             command: 'rendered',
                             svg: svgData,
                             svgPath: outputSvg,
-                            folderPath: path.dirname(outputSvg),
+                            folderPath: outDir,
                             previewUri: previewUri
                         });
-                        vscode.window.showInformationMessage('Vector hóa thành công! Đã tạo file SVG.');
+                        vscode.window.showInformationMessage('Vector hóa thành công!');
                     });
+                } else if (message.command === 'selectFolder') {
+                    vscode.commands.executeCommand('imageToVector.selectOutputDir');
                 } else if (message.command === 'openExternalFile') {
                     exec(`Start-Process "${message.filePath}"`, { shell: 'powershell.exe' });
                 } else if (message.command === 'openExternalFolder') {
@@ -57,10 +136,10 @@ function activate(context) {
         );
     });
 
-    context.subscriptions.push(disposable);
+    context.subscriptions.push(activateCmd, selectDirCmd, dropzoneCmd);
 }
 
-function getWebviewContent() {
+function getWebviewContent(currentDir) {
     return `<!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -74,14 +153,22 @@ function getWebviewContent() {
     }
     .header {
         display: flex;
+        justify-content: space-between;
         align-items: center;
-        gap: 10px;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
+    }
+    .dir-badge {
+        font-size: 12px;
+        background: rgba(255,255,255,0.08);
+        padding: 4px 8px;
+        border-radius: 6px;
+        border: 1px solid var(--vscode-widget-border);
+        cursor: pointer;
     }
     .dropzone {
         border: 2px dashed #3b82f6;
         border-radius: 16px;
-        padding: 40px 20px;
+        padding: 35px 20px;
         text-align: center;
         background: rgba(59, 130, 246, 0.05);
         cursor: pointer;
@@ -108,7 +195,7 @@ function getWebviewContent() {
         opacity: 0.9;
     }
     .preview-box {
-        margin-top: 25px;
+        margin-top: 20px;
         padding: 15px;
         border-radius: 12px;
         border: 1px solid var(--vscode-widget-border);
@@ -129,19 +216,20 @@ function getWebviewContent() {
 </head>
 <body>
     <div class="header">
-        <h2>🎯 Chuyển Đổi Ảnh Thành Vector (Antigravity Quota)</h2>
+        <h3 style="margin:0;">🎯 Xưởng Tạo Ảnh Vector (Antigravity Quota)</h3>
+        <span class="dir-badge" onclick="selectFolder()">📂 Thư mục: <span id="lblDir">${currentDir}</span> ✏️</span>
     </div>
 
     <div class="dropzone" id="dropArea">
         <p style="font-size: 28px; margin: 0 0 10px;">📥</p>
-        <p style="font-size: 16px; font-weight: 600; margin: 0 0 8px;">Kéo & thả ảnh vào đây</p>
-        <p style="font-size: 13px; opacity: 0.7; margin: 0 0 15px;">Hỗ trợ định dạng JPG, PNG, WEBP, BMP</p>
+        <p style="font-size: 15px; font-weight: 600; margin: 0 0 6px;">Kéo & thả ảnh vào đây</p>
+        <p style="font-size: 12px; opacity: 0.7; margin: 0 0 12px;">Hỗ trợ JPG, PNG, WEBP, BMP</p>
         <input type="file" id="fileInput" accept="image/*" style="display: none;" />
-        <button class="btn" onclick="document.getElementById('fileInput').click()">Hoặc chọn file từ máy tính</button>
+        <button class="btn" onclick="document.getElementById('fileInput').click()">Chọn file từ máy</button>
     </div>
 
     <div class="preview-box" id="previewBox">
-        <h3>✨ Kết Quả Vector Hóa</h3>
+        <h4 style="margin:0;">✨ Kết Quả Vector Hóa</h4>
         <div class="svg-container" id="svgContainer"></div>
         <div>
             <button class="btn" id="btnOpenFile">📄 Mở file SVG ngoài Windows</button>
@@ -157,6 +245,10 @@ function getWebviewContent() {
         const svgContainer = document.getElementById('svgContainer');
         let currentSvgPath = '';
         let currentFolderPath = '';
+
+        function selectFolder() {
+            vscode.postMessage({ command: 'selectFolder' });
+        }
 
         ['dragenter', 'dragover'].forEach(eventName => {
             dropArea.addEventListener(eventName, (e) => {
@@ -186,7 +278,6 @@ function getWebviewContent() {
         });
 
         function handleFile(file) {
-            // Note: in VS Code Webview, file.path contains full local path
             const path = file.path || file.name;
             vscode.postMessage({
                 command: 'vectorize',
