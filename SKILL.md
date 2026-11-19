@@ -1,67 +1,72 @@
 ---
 name: image-to-vector
-description: Converts reference images and signboards into 100% faithful, scalable SVG vector graphics with strict element separation (genuine vector paths for graphics, proper SVG text for typography, zero emoji substitutions).
+description: Universal skill & toolchain to convert ANY input image (signs, logos, emblems, badges, diagrams, typography) into 100% visually faithful SVG vector graphics with pure vector paths and zero emoji substitutions.
 ---
 
-# Image-to-Vector Skill
+# 🚀 Universal Image-to-Vector Skill
 
-This skill automates the creation of 100% visually faithful, production-grade SVG vector graphics from reference photos and design mockups.
-
-## ⚠️ NON-NEGOTIABLE CORE DIRECTIVES
-
-1. **100% Visual and Geometric Parity**:
-   - The generated SVG must match the reference image in layout, proportions, color palette, typography hierarchy, margins, and borders.
-2. **Strict Element Separation**:
-   - **Graphical / Iconic Elements**: MUST ALWAYS be drawn as genuine vector shapes (`<path>`, `<circle>`, `<rect>`, `<polygon>`, `<line>`, `<g>`).
-   - **PROHIBITION ON EMOJIS & SPECIAL CHARACTERS**: It is strictly forbidden to use emojis (e.g., 👠, 👞, ⛔), Unicode pictographs, or dingbat symbols to represent illustrations or icons.
-   - **Textual Elements**: MUST be rendered using genuine SVG `<text>` elements with precise font-family fallbacks, weights, text-anchor, and colors.
-3. **Automated Quality Verification**:
-   - Every generated SVG must pass `scripts/validator.py` to ensure valid XML and zero forbidden emoji substitutions.
+This skill and its bundled toolchain are **100% universal and general-purpose**, designed to convert **ANY input image** (photographs of signs, logos, icons, badges, posters, or UI elements) into high-fidelity, scalable SVG vector graphics.
 
 ---
 
-## Standard Operating Procedure (SOP)
+## 🎯 Core Principles & Non-Negotiable Rules
 
-### Step 1: Image Deconstruction & Geometry Analysis
-- Calculate canvas aspect ratio and set an appropriate `viewBox` (e.g., `0 0 1000 534`).
-- Identify color palette: background, borders, primary accent, text colors.
-- Map the spatial coordinates and bounding boxes of all components (icons, text blocks, dividers).
-
-### Step 2: Vector Graphic Extraction / Construction
-- For each graphical element (silhouettes, emblems, icons, badges):
-  - Use `python scripts/vector_tracer.py <cropped_image_or_mask> <output_path>` to extract high-resolution, smoothed SVG contours (`<path d="...">`).
-  - Or construct precise mathematical Bezier curves.
-  - Combine multiple components (e.g., shoe body + sole + laces) as grouped vector paths.
-
-### Step 3: Typography & Text Alignment
-- Identify text case (ALL CAPS, Title Case), font weights (900 for extra-bold, 800 for bold), and line spacing.
-- Center text blocks accurately using `text-anchor="middle"` with calculated anchor coordinates.
-- Render special text treatments (e.g., strikethroughs, underlines, dividers) as dedicated `<line>` or `<path>` elements.
-
-### Step 4: Layered SVG Assembly
-Assemble elements in correct Z-index order:
-1. `<defs>`: Gradients, clip paths, patterns.
-2. Background plate & outer border.
-3. Inset borders & frames.
-4. Graphical drawings (`<path>`, `<circle>`, `<g>`).
-5. Overlays (slashes, badges, clip masks).
-6. Text elements (`<text>`).
-7. Divider lines, accents, and strikethroughs.
-
-### Step 5: Verification & Quality Gate
-Run the automated validator:
-```bash
-python scripts/validator.py <generated_file.svg>
-```
-The validator checks:
-- Well-formed XML/SVG.
-- Existence of vector paths/shapes.
-- Absence of emojis or unicode approximations.
+1. **Universal Applicability**:
+   - The workflow and tools apply to **ANY input image**, regardless of subject matter (signs, vehicles, logos, diagrams, labels, product tags).
+2. **100% Geometric & Visual Parity**:
+   - The generated SVG must preserve the source image's aspect ratio, layout, hierarchical proportions, colors, and styling.
+3. **Strict Separation of Graphics vs. Text**:
+   - **Graphical Elements (drawings, silhouettes, icons, symbols, logos, borders, badges)**:
+     - MUST ALWAYS be rendered as genuine vector shapes (`<path>`, `<circle>`, `<polygon>`, `<rect>`, `<g>`).
+     - **ABSOLUTE PROHIBITION**: NEVER use emojis (e.g. 👠, 👞, ⛔), unicode characters, or symbol fonts as substitutes for illustrations.
+   - **Text Elements**:
+     - MUST be rendered as genuine SVG `<text>` elements with matched font family, weight, alignment, and fill color.
+4. **Mandatory Automated Validation**:
+   - Every generated SVG must pass `scripts/validator.py` before delivery.
 
 ---
 
-## Tooling Reference
+## 🛠️ Toolchain Reference
 
-- `scripts/vector_tracer.py`: Extracts vector contours from images into smooth SVG `<path>` data.
-- `scripts/validator.py`: Automated compliance verification tool.
-- `examples/no_shoes_sign.svg`: Gold-standard reference implementation.
+The repository provides three standardized, ready-to-use Python tools:
+
+| Tool | Purpose | Usage |
+| :--- | :--- | :--- |
+| **`scripts/auto_vectorizer.py`** | Universal automated pipeline for **ANY input image**. Detects color palette, segments foreground layers, extracts multi-contour vector `<path>` elements, and generates a ready-to-view SVG. | `python scripts/auto_vectorizer.py <input_img> <output.svg>` |
+| **`scripts/vector_tracer.py`** | High-precision contour tracer for extracting specific objects, masks, or cropped icons into smooth `<path d="...">` data. | `python scripts/vector_tracer.py <image_or_mask> [output.svg]` |
+| **`scripts/validator.py`** | Automated compliance and quality-gate checker. Guarantees well-formed XML, presence of real paths, and 100% absence of emojis in graphics. | `python scripts/validator.py <target.svg>` |
+
+---
+
+## 📋 Universal Execution Workflow
+
+Whenever a user provides ANY image and requests a vector version:
+
+### 1. Ingestion & Analysis
+- Inspect the input image's dimensions, aspect ratio, and color palette.
+- Identify the core zones:
+  - Background & borders.
+  - Graphical illustrations, logos, or icons.
+  - Textual headers, body labels, or captions.
+
+### 2. Vectorization of Graphics
+- For arbitrary designs, run `scripts/auto_vectorizer.py` to extract all contours into layered vector `<path>` elements.
+- For fine-grained hybrid signs (combining logos/drawings with clean typography):
+  - Extract the graphical shapes using `scripts/vector_tracer.py`.
+  - Reconstruct the textual elements with matched SVG `<text>` tags and exact font properties.
+
+### 3. Layer Assembly
+- Structure the SVG with proper `<defs>` (gradients, masks, clips).
+- Layer sequence:
+  1. Background plate & canvas.
+  2. Borders and frames.
+  3. Graphical drawings (`<path>`, `<g>`).
+  4. Text blocks (`<text>`).
+  5. Accent details (dividers, underlines, strikethroughs).
+
+### 4. Automated Quality Gate
+- Execute `python scripts/validator.py <generated.svg>`.
+- If any emoji or validation error is detected, fix the offending element immediately.
+
+### 5. Delivery
+- Provide the user with a direct clickable file link `file:///...` for immediate browser preview.

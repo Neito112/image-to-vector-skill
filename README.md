@@ -1,47 +1,43 @@
-# 🎯 Image-to-Vector Skill
+# 🎯 Universal Image-to-Vector Skill & Toolchain
 
-A production-grade, automated skill and toolkit for converting reference photos, signs, and graphic designs into **100% faithful, scalable SVG vector graphics**.
+A standardized, production-grade skill and automated toolchain for converting **ANY input image** into **100% faithful, scalable SVG vector graphics**.
 
-## 🌟 Key Highlights
+## 🌟 Highlights
 
-- **Pure Vector Drawing**: Graphical elements (shoes, icons, symbols) are drawn exclusively with SVG `<path>`, `<circle>`, and `<rect>` elements. **Zero emojis or unicode shortcuts.**
-- **Accurate Typography**: Genuine SVG `<text>` elements with precise font weights, kerning, and alignments.
-- **Automated Validation**: Built-in verification script (`scripts/validator.py`) guarantees structural and rule compliance.
-- **Vector Tracer Tool**: Bundled contour tracing script (`scripts/vector_tracer.py`) for automated mask-to-path generation.
+- **Universal Capability**: Works for any input image: signs, logos, badges, emblems, diagrams, labels, and iconography.
+- **Pure Vector Drawings**: Every visual shape is traced and rendered with SVG `<path>`, `<circle>`, `<polygon>`, or `<rect>`. **Strictly ZERO emoji or character approximations.**
+- **Proper Typography**: Text is structured as clean SVG `<text>` elements with matched fonts, weights, and alignments.
+- **Built-in Quality Verification**: Includes an automated validator (`scripts/validator.py`) to verify schema and banish character-based fake vectors.
 
 ---
 
 ## 📁 Repository Structure
 
 ```
-├── SKILL.md                  # Standard Operating Procedure (SOP) & Rules
+├── SKILL.md                  # Universal SOP and execution instructions
 ├── scripts/
-│   ├── vector_tracer.py      # Image contour to SVG path extractor
+│   ├── auto_vectorizer.py    # Universal end-to-end vectorizer for any image
+│   ├── vector_tracer.py      # High-precision contour-to-path extractor
 │   └── validator.py          # Strict compliance validation tool
 └── examples/
-    └── no_shoes_sign.svg     # Reference example (100% vector-faithful sign)
+    └── no_shoes_sign.svg     # Reference sign implementation (100% vector-faithful)
 ```
 
 ---
 
-## 🛠️ Usage
+## 🛠️ Toolchain Reference
 
-### 1. Tracing an image element into SVG paths:
+### 1. Vectorize Any Image Automatically:
 ```bash
-python scripts/vector_tracer.py path/to/image.png output.svg
+python scripts/auto_vectorizer.py <input_image> <output_svg>
 ```
 
-### 2. Validating compliance:
+### 2. Extract Specific Shapes/Contours to SVG:
 ```bash
-python scripts/validator.py output.svg
+python scripts/vector_tracer.py <input_or_crop> <output_svg>
 ```
 
----
-
-## 📜 Example Output
-
-The reference sign in `examples/no_shoes_sign.svg` features:
-- Metallic brushed gradient background with rounded borders.
-- Proportional prohibition ring and diagonal slash.
-- High heel stiletto and leather dress shoe drawn with **pure SVG vector paths**.
-- Centered Vietnamese and English typography with authentic divider and strikethrough styling.
+### 3. Verify Compliance (Zero Emojis, Real Vectors):
+```bash
+python scripts/validator.py <target_svg>
+```
