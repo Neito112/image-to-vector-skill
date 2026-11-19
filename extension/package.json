@@ -1,0 +1,34 @@
+{
+  "name": "image-to-vector-button",
+  "displayName": "Image to Vector (Drag & Drop)",
+  "description": "Topbar button for Antigravity to drag & drop images and vectorize them to SVG using Antigravity quota.",
+  "version": "1.0.0",
+  "publisher": "Neito",
+  "engines": {
+    "vscode": "^1.70.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:imageToVector.openDropzone"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "imageToVector.openDropzone",
+        "title": "Vectorize Image (Drag & Drop)",
+        "icon": "$(file-media)"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "imageToVector.openDropzone",
+          "group": "navigation"
+        }
+      ]
+    }
+  }
+}
