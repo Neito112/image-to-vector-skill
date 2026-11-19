@@ -1,12 +1,11 @@
 # Image-to-Vector Skill
 
-This skill automates the process of converting an image or visual request into a clean, scalable SVG vector file.
+This skill automates the conversion of images into scalable SVG files.
 
 ## Workflow
-1. **Analyze**: Examine the uploaded image.
-2. **Generate**: Create a clear SVG representation of the design using standardized shapes and text elements.
-3. **Save**: Save the file as an .svg in the workspace.
-4. **Notify**: Provide the user with a direct link for preview.
+1. **Analyze**: Use visual processing to understand the input.
+2. **Generate**: Run the `scripts/generator.py` to create a structured SVG.
+3. **Save/Notify**: Save the result to the user's workspace and provide a preview link.
 
-## Usage
-Simply upload an image and say "Hãy áp dụng skill image-to-vector".
+## Tooling
+- `python scripts/generator.py "<prompt>"`: Generates initial SVG based on design requirements.
