@@ -3,42 +3,85 @@
     <!-- Brushed metal metallic gradient -->
     <linearGradient id="metalBg" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#eceef1"/>
-      <stop offset="30%" stop-color="#dedfe3"/>
-      <stop offset="70%" stop-color="#e8e9ec"/>
-      <stop offset="100%" stop-color="#dadbe0"/>
+      <stop offset="25%" stop-color="#e0e2e6"/>
+      <stop offset="50%" stop-color="#eceef1"/>
+      <stop offset="75%" stop-color="#dadbe0"/>
+      <stop offset="100%" stop-color="#e6e8eb"/>
     </linearGradient>
     
     <!-- Clip path to keep slash strictly within the prohibition ring -->
     <clipPath id="circleClip">
-      <circle cx="220" cy="260" r="165" />
+      <circle cx="220" cy="260" r="150" />
     </clipPath>
   </defs>
 
   <!-- 1. Background metal plate with rounded corners -->
-  <rect width="1000" height="534" rx="22" ry="22" fill="url(#metalBg)" stroke="#1f2430" stroke-width="6"/>
+  <rect width="1000" height="534" rx="20" ry="20" fill="url(#metalBg)" stroke="#222834" stroke-width="6"/>
 
   <!-- 2. Inner border rectangle inset from plate edges -->
-  <rect x="18" y="24" width="964" height="486" rx="14" ry="14" fill="none" stroke="#222834" stroke-width="4.5"/>
+  <rect x="18" y="22" width="964" height="490" rx="14" ry="14" fill="none" stroke="#222834" stroke-width="4.5"/>
 
   <!-- ==================== LEFT GRAPHICAL DRAWINGS ==================== -->
   <g id="prohibition-sign">
-    <!-- 3. Shoe Vector Drawings (PURE SVG PATHS - NO EMOJIS OR UNICODE) -->
-    <!-- High Heel Silhouette -->
-    <path d="M 120.1 240.2 L 113.9 252.6 L 113.9 265.0 L 126.3 306.4 L 128.4 349.9 L 132.5 349.9 L 132.5 300.2 L 134.6 291.9 L 140.8 285.7 L 147.0 287.8 L 157.3 304.3 L 167.7 343.7 L 176.0 356.1 L 207.0 358.2 L 252.6 352.0 L 256.7 347.8 L 254.7 341.6 L 213.3 320.9 L 194.6 320.9 L 180.1 312.6 L 171.8 279.5 L 136.6 229.8 L 130.4 229.8 Z" fill="#222834" />
+    
+    <!-- 3A. HIGH HEEL PUMP (Smooth, elegant Bezier vector reconstruction) -->
+    <path d="M 128 350 
+             L 133 350 
+             C 133 310, 135 292, 140 286 
+             C 150 284, 162 315, 178 348 
+             C 186 356, 206 358, 224 356 
+             C 242 353, 254 350, 258 348 
+             C 256 342, 246 335, 235 328 
+             C 213 320, 184 315, 176 295 
+             C 168 274, 148 242, 131 230 
+             C 120 238, 114 252, 115 272 
+             C 117 282, 128 290, 128 350 Z" 
+          fill="#222834" />
 
-    <!-- Dress Shoe Silhouette (Body, Sole, Laces & Accents) -->
-    <path d="M 281.6 244.3 L 285.7 244.3 L 296.1 250.5 L 302.3 252.6 L 325.1 256.7 L 327.1 258.8 L 331.3 258.8 L 327.1 248.4 L 323.0 246.4 L 302.3 244.3 Z" fill="#222834" />
-    <path d="M 225.7 258.8 L 219.5 250.5 L 215.3 250.5 L 215.3 246.4 L 209.1 248.4 L 207.0 252.6 L 202.9 252.6 L 198.8 248.4 L 194.6 254.7 L 190.5 250.5 L 194.6 248.4 L 190.5 250.5 L 186.3 248.4 L 190.5 250.5 L 190.5 252.6 L 196.7 258.8 L 200.8 258.8 L 202.9 252.6 L 205.0 258.8 L 215.3 260.9 L 215.3 254.7 L 219.5 256.7 L 217.4 250.5 L 221.5 252.6 Z" fill="#222834" />
-    <path d="M 198.8 188.4 L 194.6 196.7 L 225.7 223.6 L 236.0 221.5 L 242.2 227.7 L 246.4 236.0 L 254.7 244.3 L 281.6 258.8 L 310.6 269.2 L 327.1 269.2 L 331.3 265.0 L 323.0 265.0 L 320.9 262.9 L 310.6 262.9 L 287.8 254.7 L 279.5 248.4 L 271.2 246.4 L 258.8 236.0 L 250.5 225.7 L 211.2 188.4 L 205.0 184.3 Z" fill="#222834" />
-    <path d="M 213.3 167.7 L 209.1 171.8 L 207.0 176.0 L 219.5 188.4 L 229.8 194.6 L 227.7 182.2 L 225.7 178.1 L 217.4 169.8 Z" fill="#222834" />
-    <path d="M 227.7 149.1 L 227.7 155.3 L 238.1 171.8 L 248.4 178.1 L 269.2 176.0 L 273.3 180.1 L 262.9 184.3 L 248.4 184.3 L 240.2 180.1 L 221.5 157.3 L 217.4 163.6 L 227.7 171.8 L 234.0 182.2 L 234.0 200.8 L 275.4 240.2 L 300.2 238.1 L 302.3 240.2 L 316.8 240.2 L 296.1 223.6 L 291.9 223.6 L 283.6 229.8 L 279.5 225.7 L 289.9 215.3 L 287.8 211.2 L 285.7 215.3 L 275.4 219.5 L 271.2 213.3 L 275.4 209.1 L 279.5 209.1 L 281.6 202.9 L 285.7 202.9 L 285.7 198.8 L 281.6 202.9 L 271.2 205.0 L 265.0 202.9 L 267.1 196.7 L 273.3 196.7 L 273.3 190.5 L 267.1 192.5 L 260.9 190.5 L 262.9 184.3 L 269.2 184.3 L 273.3 180.1 L 277.4 180.1 L 271.2 176.0 L 256.7 173.9 L 248.4 165.6 L 242.2 149.1 L 238.1 147.0 Z" fill="#222834" />
+    <!-- 3B. DRESS SHOE / OXFORD (Clean, smooth geometric & Bezier vector reconstruction) -->
+    <g transform="translate(262, 210) rotate(42)">
+      <!-- Heel Block -->
+      <path d="M -72 17 L -44 17 L -44 35 L -72 35 Z" fill="#222834" />
+      
+      <!-- Outsole welt & tread -->
+      <path d="M -44 19 
+               C -25 21, -5 23, 15 25 
+               C 35 27, 58 26, 74 21 
+               C 77 24, 75 28, 70 30 
+               C 52 35, 28 36, 5 34 
+               C -18 32, -35 29, -44 26 Z" 
+            fill="#222834" />
+      
+      <!-- Upper Body -->
+      <path d="M -70 15 
+               C -68 0, -62 -14, -54 -20 
+               C -46 -18, -38 -15, -30 -13 
+               C -26 -18, -20 -23, -12 -23 
+               C -4 -23, 4 -19, 12 -12 
+               C 28 -5, 48 5, 65 14 
+               C 73 18, 75 20, 72 21 
+               C 58 25, 35 25, 15 23 
+               C -5 21, -25 19, -44 17 
+               C -55 16, -65 16, -70 15 Z" 
+            fill="#222834" />
+      
+      <!-- Collar Opening Accent -->
+      <path d="M -52 -18 C -44 -14, -36 -12, -28 -12 C -24 -16, -18 -19, -12 -19" 
+            stroke="#e0e2e6" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+      <!-- Clean White Laces (4 distinct horizontal bars) -->
+      <line x1="-22" y1="-14" x2="-10" y2="-12" stroke="#e0e2e6" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="-19" y1="-8"  x2="-7"  y2="-6"  stroke="#e0e2e6" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="-16" y1="-2"  x2="-4"  y2="0"   stroke="#e0e2e6" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="-13" y1="4"   x2="-1"  y2="6"   stroke="#e0e2e6" stroke-width="2.5" stroke-linecap="round"/>
+    </g>
 
     <!-- 4. Prohibition Circle (Red Ring) -->
     <circle cx="220" cy="260" r="150" fill="none" stroke="#d3222a" stroke-width="26"/>
 
     <!-- 5. Prohibition Diagonal Slash (Top-Left to Bottom-Right) -->
     <g clip-path="url(#circleClip)">
-      <line x1="90" y1="130" x2="350" y2="390" stroke="#d3222a" stroke-width="26" stroke-linecap="square"/>
+      <line x1="80" y1="120" x2="360" y2="400" stroke="#d3222a" stroke-width="26" stroke-linecap="square"/>
     </g>
   </g>
 
