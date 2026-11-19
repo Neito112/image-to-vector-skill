@@ -4,6 +4,7 @@ const fs = require('fs');
 const { exec } = require('child_process');
 
 let outputConfigPath = '';
+let statusBarItem = null;
 
 function getEffectiveOutputDir() {
     try {
@@ -22,40 +23,35 @@ function saveOutputDir(newDir) {
         const data = { outputDir: newDir, updatedAt: new Date().toISOString() };
         fs.writeFileSync(outputConfigPath, JSON.stringify(data, null, 2), 'utf-8');
     } catch (e) {}
+    if (statusBarItem) {
+        statusBarItem.text = `$(folder-opened) Output: ${path.basename(newDir)}`;
+        statusBarItem.tooltip = `Thư mục lưu ảnh vector: ${newDir} (Nhấp để đổi)`;
+    }
 }
 
 function activate(context) {
-    // Configure path for output_config.json
     const wsFolders = vscode.workspace.workspaceFolders;
     const rootDir = wsFolders && wsFolders.length > 0 ? wsFolders[0].uri.fsPath : 'd:\\ComfyUI\\svg';
     outputConfigPath = path.join(rootDir, 'output_config.json');
 
-    // By default, sessionActive is FALSE (buttons are strictly hidden in all other chats/windows)
-    vscode.commands.executeCommand('setContext', 'imageToVector.sessionActive', false);
+    // Create Status Bar Button (Always visible on the status bar for instant 1-click access)
+    statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+    statusBarItem.command = 'imageToVector.selectOutputDir';
+    const initialDir = getEffectiveOutputDir();
+    statusBarItem.text = `$(folder-opened) Output: ${path.basename(initialDir)}`;
+    statusBarItem.tooltip = `Thư mục lưu ảnh vector: ${initialDir} (Nhấp để chọn thư mục khác)`;
+    statusBarItem.show();
+    context.subscriptions.push(statusBarItem);
 
-    // Command to activate session specifically when repo link is provided
-    let activateCmd = vscode.commands.registerCommand('imageToVector.activateSession', function () {
-        vscode.commands.executeCommand('setContext', 'imageToVector.sessionActive', true);
-        const currentDir = getEffectiveOutputDir();
-        vscode.window.showInformationMessage(
-            `🚀 Khung chat này đã được kích hoạt thành Xưởng Tạo Ảnh Vector! Thư mục đầu ra hiện tại: ${currentDir}`,
-            'Đổi thư mục đầu ra'
-        ).then(selection => {
-            if (selection === 'Đổi thư mục đầu ra') {
-                vscode.commands.executeCommand('imageToVector.selectOutputDir');
-            }
-        });
-    });
-
-    // Command to select output directory
+    // Command to select output directory (via Windows Folder Browser)
     let selectDirCmd = vscode.commands.registerCommand('imageToVector.selectOutputDir', async function () {
         const currentDir = getEffectiveOutputDir();
         const options = {
             canSelectFiles: false,
             canSelectFolders: true,
             canSelectMany: false,
-            openLabel: 'Chọn thư mục này làm nơi lưu ảnh vector',
-            title: 'Chọn thư mục lưu ảnh vector đầu ra'
+            openLabel: 'Chọn thư mục này làm nơi xuất ảnh vector',
+            title: 'Chọn thư mục xuất ảnh vector đầu ra'
         };
         if (fs.existsSync(currentDir)) {
             options.defaultUri = vscode.Uri.file(currentDir);
@@ -67,16 +63,16 @@ function activate(context) {
             saveOutputDir(selectedPath);
             vscode.window.showInformationMessage(
                 `✅ Đã đặt thư mục ảnh đầu ra: ${selectedPath}`,
-                'Mở thư mục'
+                'Mở thư mục trên máy'
             ).then(sel => {
-                if (sel === 'Mở thư mục') {
+                if (sel === 'Mở thư mục trên máy') {
                     exec(`explorer.exe "${selectedPath}"`);
                 }
             });
         }
     });
 
-    // Command to open drag-and-drop dropzone
+    // Command to open drag & drop webview
     let dropzoneCmd = vscode.commands.registerCommand('imageToVector.openDropzone', function () {
         const panel = vscode.window.createWebviewPanel(
             'imageToVectorDropzone',
@@ -102,12 +98,12 @@ function activate(context) {
                     const outputSvg = path.join(outDir, 'output_vector.svg');
                     const scriptPath = path.join(rootDir, 'image-to-vector-skill-repo', 'scripts', 'auto_vectorizer.py');
 
-                    vscode.window.showInformationMessage(`Đang vector hóa bằng Antigravity quota vào thư mục: ${outDir}`);
+                    vscode.window.showInformationMessage(`Đang vector hóa vào: ${outDir}`);
 
                     const cmd = `python "${scriptPath}" "${filePath}" "${outputSvg}"`;
                     exec(cmd, (err, stdout, stderr) => {
                         if (err) {
-                            vscode.window.showErrorMessage('Lỗi xử lý vector: ' + err.message);
+                            vscode.window.showErrorMessage('Lỗi xử lý: ' + err.message);
                             return;
                         }
                         const svgData = fs.readFileSync(outputSvg, 'utf-8');
@@ -136,7 +132,7 @@ function activate(context) {
         );
     });
 
-    context.subscriptions.push(activateCmd, selectDirCmd, dropzoneCmd);
+    context.subscriptions.push(selectDirCmd, dropzoneCmd);
 }
 
 function getWebviewContent(currentDir) {
@@ -216,7 +212,7 @@ function getWebviewContent(currentDir) {
 </head>
 <body>
     <div class="header">
-        <h3 style="margin:0;">🎯 Xưởng Tạo Ảnh Vector (Antigravity Quota)</h3>
+        <h3 style="margin:0;">🎯 Xưởng Tạo Ảnh Vector</h3>
         <span class="dir-badge" onclick="selectFolder()">📂 Thư mục: <span id="lblDir">${currentDir}</span> ✏️</span>
     </div>
 

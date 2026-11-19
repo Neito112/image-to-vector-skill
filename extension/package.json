@@ -1,8 +1,8 @@
 {
   "name": "image-to-vector-button",
-  "displayName": "Image to Vector (Session-Scoped)",
-  "description": "Session-scoped topbar tools for Antigravity: drag & drop vectorization and output directory picker, active ONLY in chat sessions linked to the repo.",
-  "version": "1.1.0",
+  "displayName": "Image to Vector (Chat & Topbar Button)",
+  "description": "Nút chọn thư mục ảnh đầu ra và kéo thả ảnh ngay trên ô nhập chat và topbar của Antigravity.",
+  "version": "1.2.0",
   "publisher": "Neito",
   "engines": {
     "vscode": "^1.70.0"
@@ -11,43 +11,49 @@
     "Other"
   ],
   "activationEvents": [
-    "onStartupFinished",
-    "onCommand:imageToVector.activateSession",
-    "onCommand:imageToVector.selectOutputDir",
-    "onCommand:imageToVector.openDropzone"
+    "*"
   ],
   "main": "./extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "imageToVector.activateSession",
-        "title": "Activate Vector Session (Kích hoạt phiên làm việc)",
-        "category": "ImageToVector"
-      },
-      {
         "command": "imageToVector.selectOutputDir",
-        "title": "Chọn thư mục ảnh đầu ra (Select Output Folder)",
+        "title": "📂 Chọn thư mục ảnh đầu ra",
         "icon": "$(folder-opened)",
         "category": "ImageToVector"
       },
       {
         "command": "imageToVector.openDropzone",
-        "title": "Vectorize Image (Drag & Drop)",
+        "title": "🖼️ Vectorize Image (Drag & Drop)",
         "icon": "$(file-media)",
         "category": "ImageToVector"
       }
     ],
     "menus": {
-      "editor/title": [
+      "chat/title": [
         {
           "command": "imageToVector.selectOutputDir",
-          "group": "navigation@1",
-          "when": "imageToVector.sessionActive"
+          "group": "navigation@1"
         },
         {
           "command": "imageToVector.openDropzone",
-          "group": "navigation@2",
-          "when": "imageToVector.sessionActive"
+          "group": "navigation@2"
+        }
+      ],
+      "chat/input/status": [
+        {
+          "command": "imageToVector.selectOutputDir",
+          "group": "navigation@1"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "imageToVector.selectOutputDir",
+          "group": "navigation@1"
+        },
+        {
+          "command": "imageToVector.openDropzone",
+          "group": "navigation@2"
         }
       ]
     }
